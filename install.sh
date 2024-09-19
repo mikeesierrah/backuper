@@ -724,13 +724,15 @@ fi
 
     local send_file_command
     local send_notification_command
+    
     if [ "$send_to_option" == "1" ]; then  # Telegram
-        send_file_command="curl -s -F \"chat_id=$chat_id\" -F \"document=@\$file_to_send\" -F \"caption=\$caption\" \"https://api.telegram.org/bot$bot_token/sendDocument\""
-        send_notification_command="curl -s -X POST \"https://api.telegram.org/bot$bot_token/sendMessage\" -d \"chat_id=$chat_id\" -d \"text=\$message\""
+        send_file_command="curl -s -F \"chat_id=$chat_id\" -F document=@\"\$file_to_send\" -F \"caption=\$caption\" \"https://api.telegram.org/bot$bot_token/sendDocument\""
+        send_notification_command="curl -s -X POST \"https://api.telegram.org/bot$bot_token/sendMessage\" -d chat_id=\"$chat_id\" -d text=\"\$message\""
     elif [ "$send_to_option" == "2" ]; then  # Discord
-        send_file_command="curl -s -H \"Content-Type: multipart/form-data\" -F \"payload_json={\\\"content\\\":\"\$caption\"}\" -F \"file=@\$file_to_send\" \"$webhook_url\""
-        send_notification_command="curl -s -H \"Content-Type: application/json\" -X POST -d \"{\\\"content\\\": \"\$message\"}\" \"$webhook_url\""
+        send_file_command="curl -s -H \"Content-Type: multipart/form-data\" -F \"payload_json={\\\"content\\\":\\\"\$caption\\\"}\" -F \"file=@\$file_to_send\" \"$webhook_url\""
+        send_notification_command="curl -s -H \"Content-Type: application/json\" -X POST -d \"{\\\"content\\\":\\\"\$message\\\"}\" \"$webhook_url\""
     fi
+
 
     cat <<EOL > "$backup_script"
 #!/bin/bash
